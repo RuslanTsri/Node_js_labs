@@ -23,10 +23,10 @@ export async function fetchUserProfiles(userIds: string[]): Promise<UserProfile[
 }
 
 // Функція retryOperation
-export async function retryOperation(
-    operation: () => Promise<unknown>,
+export async function retryOperation<T>(
+    operation: () => Promise<T>,
     maxRetries: number = 3
-): Promise<unknown> {
+): Promise<T> {
     let attempts = 0;
     while (attempts < maxRetries) {
         attempts++;
@@ -38,15 +38,16 @@ export async function retryOperation(
             await delay(100);
         }
     }
+    throw new Error("Неочікувана помилка");
 }
 
 // Функція processInBatches
-export async function processInBatches(
-    items: number[],
+export async function processInBatches<T, R>(
+    items: T[],
     batchSize: number,
-    processor: (batch: number[]) => Promise<number[]>
-): Promise<number[]> {
-    const results: number[] = [];
+    processor: (batch: T[]) => Promise<R[]>
+): Promise<R[]> {
+    const results: R[] = [];
     const totalBatches = Math.ceil(items.length / batchSize);
 
     for (let i = 0; i < items.length; i += batchSize) {
@@ -59,15 +60,14 @@ export async function processInBatches(
     }
     return results;
 }
-
 // Функція raceWithTimeout
-export async function raceWithTimeout(
-    promise: Promise<unknown>,
+export async function raceWithTimeout<T>(
+    promise: Promise<T>,
     timeoutMs: number
-): Promise<unknown> {
+): Promise<T> {
     const timeoutPromise = delay(timeoutMs).then(() => {
         throw new Error(`Operation timed out after ${timeoutMs}ms`);
     });
 
-    return Promise.race([promise, timeoutPromise]);
+    return Promise.race([promise, timeoutPromise]) as Promise<T>;
 }
