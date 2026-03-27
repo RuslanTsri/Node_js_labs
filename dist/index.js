@@ -1,4 +1,4 @@
-// 3.3. Функція delay
+// Функція delay
 export function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -12,7 +12,7 @@ export async function fetchUserProfiles(userIds) {
     });
     return Promise.all(promises);
 }
-// 3.5. Функція retryOperation
+// Функція retryOperation
 export async function retryOperation(operation, maxRetries = 3) {
     let attempts = 0;
     while (attempts < maxRetries) {
@@ -27,8 +27,9 @@ export async function retryOperation(operation, maxRetries = 3) {
             await delay(100);
         }
     }
+    throw new Error("Неочікувана помилка");
 }
-// 3.6. Функція processInBatches
+// Функція processInBatches
 export async function processInBatches(items, batchSize, processor) {
     const results = [];
     const totalBatches = Math.ceil(items.length / batchSize);
@@ -41,7 +42,7 @@ export async function processInBatches(items, batchSize, processor) {
     }
     return results;
 }
-// 3.7. Функція raceWithTimeout
+// Функція raceWithTimeout
 export async function raceWithTimeout(promise, timeoutMs) {
     const timeoutPromise = delay(timeoutMs).then(() => {
         throw new Error(`Operation timed out after ${timeoutMs}ms`);
